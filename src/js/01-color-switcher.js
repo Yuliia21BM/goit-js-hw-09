@@ -12,7 +12,7 @@ stopBtn.setAttribute("disabled", false);
 
 function onClickStart(e) {
     bodyEl.style.backgroundColor = getRandomHexColor();
-    timerId = setInterval(() => { 
+    const timerId = setInterval(() => { 
         bodyEl.style.backgroundColor = getRandomHexColor();
     }, 1000);
     startBtn.setAttribute("disabled", false);
