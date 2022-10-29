@@ -10,7 +10,7 @@ startBtn.addEventListener('click', onClickStart);
 stopBtn.addEventListener('click', onClickStop);
 stopBtn.setAttribute("disabled", false);
 
-let timerId;
+let timerId = null;
 
 function onClickStart(e) {
     bodyEl.style.backgroundColor = getRandomHexColor();
