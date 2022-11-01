@@ -2,69 +2,47 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const formEl = document.querySelector('.form');
 
-formEl.addEventListener('input', onFormInput);
-formEl.addEventListener('submit', onFormSubmit)
+let intervalCounter = 0;
 
-let firstDelay = 0;
-let dalayStep = 0;
-let amount = 0;
-const promiseCounter = counterOfPromises();
-const dilayCounter = counterOfDilay();
-
-const counter = [];
-
-
-
-function onFormInput(e) {
-  if (e.target.name === "delay") {
-    firstDelay = Number(e.target.value);
-  } else if (e.target.name === "step") {
-    dalayStep = Number(e.target.value);
-  } else if (e.target.name === "amount") {
-    amount = Number(e.target.value);
-  }
-}
+formEl.addEventListener('submit', onFormSubmit);
 
 function onFormSubmit(e) {
   e.preventDefault();
+  intervalCounter = 0;
 
-  for (let i = 1; i <= amount; i += 1) {
-    counter.push(i);
-  }
-  
-  setTimeout(() => {
-    counter.map(() => { createPromise(promiseCounter(), (dilayCounter() + firstDelay)).then(result => Notify.success(result)).catch(error => Notify.failure(error)) });
-  }, firstDelay);
-}
+  const formData = new FormData(e.target);
+  const { delay, step, amount } = Object.fromEntries(formData);
 
-function counterOfPromises() {
-  let count = 0;
-  return function () {
-    count += 1;
-    return count;
-  }
-}
+  let countertDeley = +delay;
+  let counterPosition = 0;
 
-function counterOfDilay() {
-  let count = firstDelay + dalayStep;
-  return function () {
-    count += dalayStep;
-    return count;
-  }
+    const intervalId = setInterval(() => {
+      intervalCounter += 1;
+      if (intervalCounter === +amount) {
+        clearInterval(intervalId);
+      };
+      if (intervalCounter === 1) {
+        counterPosition += 1;
+        createPromise(counterPosition, countertDeley).then(result => result).catch(result => result);
+        return
+      } else {
+        counterPosition += 1;
+        countertDeley += +step;
+        return createPromise(counterPosition, countertDeley).then(result => result).catch(result => result);
+      }
+    }, 0);
 }
 
 function createPromise(position, delay) {
-  const promise = new Promise((resolve, reject) => {
+  const promis = new Promise((resolve, reject) => {
     const shouldResolve = Math.random() > 0.3;
     setTimeout(() => {
       if (shouldResolve) {
-        resolve(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        resolve(Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`));
       } else {
         reject(Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`));
       }
-    }, delay);
-  }
-  )
-  return promise;
+    }, delay)
+  })
+  return promis;
 }
-
